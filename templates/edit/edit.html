@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='/search.css') }}">
+{% endblock %}
+
+{% block title %}
+    Edit
+{% endblock %}
+
+{% block navbar %}
+<ul class="navbar-nav me-auto">
+    <li class="nav-item">
+        <a class="nav-link" href="/import">Import</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/export">Export</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/search">Tìm kiếm</a>
+    </li>
+    </li>
+</ul>
+{% endblock %}
+
+{% block body %}
+<div class="container bootstrap snippets">
+    <h1 class="text-primary">Keyword: {{ name }}</h1>
+    <hr>
+    <div class="col-md-9 personal-info">
+        <div class="alert alert-info alert-dismissable">
+            <a class="panel-close close" data-dismiss="alert">×</a>
+            <i class="fa fa-coffee"></i>
+<!--            This is an <strong>.alert</strong>. Use this to show important messages to the user.-->
+        </div>
+        <h3>Personal info</h3>
+
+        <form class="form-horizontal" role="form">
+            <div class="form-group">
+                <label class="col-lg-3 control-label">Form type:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" value={{ form_type }}>
+                    </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-3 control-label">Match type:</label>
+                <div class="col-lg-8">
+                    <input class="form-control" type="text" value={{ match_type }}>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-3 control-label">Level:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" value={{ level }}>
+                    </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-3 control-label">Level name:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" value={{ level_name }}>
+                    </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-3 control-label">Time Zone:</label>
+                <div class="col-lg-8">
+                    <div class="ui-select">
+                        <select id="user_time_zone" class="form-control">
+                            <option value="Hawaii">(GMT-10:00) Hawaii</option>
+                            <option value="Alaska">(GMT-09:00) Alaska</option>
+                            <option value="Pacific Time (US &amp; Canada)">(GMT-08:00) Pacific Time (US &amp; Canada)</option>
+                            <option value="Arizona">(GMT-07:00) Arizona</option>
+                            <option value="Mountain Time (US &amp; Canada)">(GMT-07:00) Mountain Time (US &amp; Canada)</option>
+                            <option value="Central Time (US &amp; Canada)" selected="selected">(GMT-06:00) Central Time (US &amp; Canada)</option>
+                            <option value="Eastern Time (US &amp; Canada)">(GMT-05:00) Eastern Time (US &amp; Canada)</option>
+                            <option value="Indiana (East)">(GMT-05:00) Indiana (East)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

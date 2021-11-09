@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}
+    Home
+{% endblock %}
+
+{% block navbar %}
+<ul class="navbar-nav me-auto">
+    <li class="nav-item">
+        <a class="nav-link" style="color:#FFF3E4" href="/import">Import</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/export">Export</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/search">Tìm kiếm</a>
+    </li>
+    </li>
+</ul>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div>
+            Có {{ insert_count }} keyword đã được thêm vào
+<!--            <a href="/home">Xem</a>-->
+        </div>
+        <div>
+            Có {{ update_count }} keyword đã được cập nhật
+<!--            <a href="/home">Xem</a>-->
+        </div>
+    </div>
+{% endblock %}

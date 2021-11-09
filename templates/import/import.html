@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}
+    Home
+{% endblock %}
+
+{% block navbar %}
+<ul class="navbar-nav me-auto">
+    <li class="nav-item">
+        <a class="nav-link" style="color:#FFF3E4" href="/import">Import</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/export">Export</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/search">Tìm kiếm</a>
+    </li>
+    </li>
+</ul>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <form action="/import/xlsximport" method="POST" enctype="multipart/form-data">
+            <label for="myfile">Chọn file .xlsx để lưu dữ liệu:</label>
+            <input type="file" id="myfile" name="xlsxfile">
+            <button type="submit">Lưu.</button>
+        </form>
+
+    </div>
+{% endblock %}

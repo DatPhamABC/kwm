@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='/search.css') }}">
+{% endblock %}
+
+{% block title %}
+    Filter
+{% endblock %}
+
+{% block navbar %}
+<ul class="navbar-nav me-auto">
+    <li class="nav-item">
+        <a class="nav-link" href="/import">Import</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/export">Export</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" style="color:#FFF3E4" href="/search">Tìm kiếm</a>
+    </li>
+</ul>
+{% endblock %}
+
+{% block body %}
+    <div class="container-search-bar">
+        <div class="row">
+            <div class="col-xs-8 col-xs-offset-2">
+                <div class="input-group">
+                    <form class="search-form" action="/search" method="GET" autocomplete="off">
+                        <div class="input-block">
+                            <div class="input-group-btn search-panel">
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-campaign-button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Campaign
+                                    </button>
+                                    <input type="hidden" name="campaign-filter" value="" id="campaign-input"/>
+                                    <ul id="dropdown-menu-campaign" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item">Tất cả</a></li>
+                                        <li class="divider"></li>
+                                        {% for item in campaign_list %}
+                                            <li><a class="dropdown-item">{{item[0]}}</a></li>
+                                        {%endfor%}
+                                    </ul>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-adgroup-button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Ad group
+                                    </button>
+                                    <input type="hidden" name="adgroup-filter" value="" id="adgroup-input"/>
+                                    <ul id="dropdown-menu-adgroup" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item">Tất cả</a></li>
+                                        <li class="divider"></li>
+                                        {% for item in adgroup_list %}
+                                            <li><a class="dropdown-item">{{item[0]}}</a></li>
+                                        {%endfor%}
+                                    </ul>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-province-button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Province
+                                    </button>
+                                    <input type="hidden" name="province-filter" value="" id="province-input"/>
+                                    <ul id="dropdown-menu-province" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item">Tất cả</a></li>
+                                        <li class="divider"></li>
+                                        {% for item in province_list %}
+                                            <li><a class="dropdown-item">{{item[0]}}</a></li>
+                                        {%endfor%}
+                                    </ul>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-district-button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        District
+                                    </button>
+                                    <input type="hidden" name="district-filter" value="" id="district-input"/>
+                                    <ul id="dropdown-menu-district" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item">Tất cả</a></li>
+                                        <li class="divider"></li>
+                                        {% for item in district_list %}
+                                            <li><a class="dropdown-item">{{item[0]}}</a></li>
+                                        {%endfor%}
+                                    </ul>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-hotel-button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Hotel
+                                    </button>
+                                    <input type="hidden" name="hotel-filter" value="" id="hotel-input"/>
+                                    <ul id="dropdown-menu-hotel" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item">Tất cả</a></li>
+                                        <li class="divider"></li>
+                                        {% for item in hotel_list %}
+                                            <li><a class="dropdown-item">{{item[0]}}</a></li>
+                                        {%endfor%}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="input-bar-btn">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary" type="submit"><span class="fa fa-search"></span></button>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+    <table id="table-detail" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Keyword</th>
+                <th>Level</th>
+                <th>Match type</th>
+                <th>Positive/Negative
+                <th>Level name</th>
+                <th>Target name</th>
+                <th>Target type</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in keyword_list %}
+                <tr>
+                    <td>{{ item[1] }}</td>
+                    <td>{{ item[3] }}</td>
+                    <td>{{ item[2] }}</td>
+                    <td>{{ item[4] }}</td>
+                    <td>{{ item[5] }}</td>
+
+                    <td>{{ item[6] }}</td>
+                    <td>{{ item[7] }}</td>
+                    {% if item[4] == 'positive' %}
+                        <td>
+                            <a href="{{ url_for('.keyword_edit_positive', id=item[0], name=item[1],
+                            form_type=item[4], match_type=item[2], level=item[3], level_name=item[5],
+                            target_name=item[6], target_type=item[7])|urlencode }}">Sửa</a>
+                        </td>
+                    {% else %}
+                        <td>
+                            <a href="{{ url_for('.keyword_edit_negative', id=item[0], name=item[1],
+                            form_type=item[4], match_type=item[2], level=item[3], level_name=item[5])|urlencode }}">Sửa</a>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+<script>
+    $("#dropdown-campaign-button").on("click", function() {
+        $('#dropdown-menu-campaign').toggleClass('open');
+    });
+    $("#dropdown-menu-campaign li").on("click", function() {
+        $('#dropdown-campaign-button').text($(this).text());
+        $('#dropdown-menu-campaign').removeClass('open');
+        $('#campaign-input').val($(this).text());
+    });
+
+    $("#dropdown-adgroup-button").on("click", function() {
+        $('#dropdown-menu-adgroup').toggleClass('open');
+    });
+    $("#dropdown-menu-adgroup li").on("click", function() {
+        $('#dropdown-adgroup-button').text($(this).text());
+        $('#dropdown-menu-adgroup').removeClass('open');
+        $('#adgroup-input').val($(this).text());
+    });
+
+    $("#dropdown-province-button").on("click", function() {
+        $('#dropdown-menu-province').toggleClass('open');
+    });
+    $("#dropdown-menu-province li").on("click", function() {
+        $('#dropdown-province-button').text($(this).text());
+        $('#dropdown-menu-province').removeClass('open');
+        $('#province-input').val($(this).text());
+    });
+
+    $("#dropdown-district-button").on("click", function() {
+        $('#dropdown-menu-district').toggleClass('open');
+    });
+    $("#dropdown-menu-district li").on("click", function() {
+        $('#dropdown-district-button').text($(this).text());
+        $('#dropdown-menu-district').removeClass('open');
+        $('#district-input').val($(this).text());
+    });
+
+    $("#dropdown-hotel-button").on("click", function() {
+        $('#dropdown-menu-hotel').toggleClass('open');
+    });
+    $("#dropdown-menu-hotel li").on("click", function() {
+        $('#dropdown-hotel-button').text($(this).text());
+        $('#dropdown-menu-hotel').removeClass('open');
+        $('#hotel-input').val($(this).text());
+    });
+
+    $(document).ready(function () {
+        $('#table-detail').DataTable();
+    });
+</script>
+{% endblock %}
