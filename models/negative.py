@@ -6,7 +6,9 @@ Base = declarative_base()
 
 class NegativeKeyword(Base):
     __tablename__ = 'negative'
+    __table_args__ = {'schema': 'keywords'}
     id = Column('id', BigInteger, primary_key=True)
     campaign_id = Column('campaign_id', BigInteger)
     ad_group_id = Column('ad_group_id', BigInteger)
     keyword_id = Column('keyword_id', BigInteger)
+

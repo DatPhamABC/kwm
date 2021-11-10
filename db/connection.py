@@ -18,9 +18,6 @@ def db(source):
     data_source = extract_datasource(db_config)
     pool_size = POOL_SIZE_DEFAULT
 
-    # config_db = config["database default"]
-    # data_source = extract_datasource(config_db)
-    # # pool_size = config_db.get("pool_size", POOL_SIZE_DEFAULT)
     engine = create_engine(data_source.get_source(), pool_pre_ping=True, pool_size=pool_size, max_overflow=0)
     return scoped_session(sessionmaker(bind=engine, expire_on_commit=True, autocommit=True, autoflush=True))
 

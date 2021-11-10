@@ -14,6 +14,7 @@ class typeEnum(enum.Enum):
 
 class Keyword(Base):
     __tablename__ = 'keyword'
+    __table_args__ = {'schema': 'keywords'}
     id = Column('id', BigInteger, primary_key=True)
     word = Column('word', String)
     type = Column('type', Enum(typeEnum))

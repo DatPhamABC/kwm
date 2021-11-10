@@ -6,7 +6,7 @@ from models.keyword import Keyword, typeEnum
 import datetime
 
 from models.negative import NegativeKeyword
-from models.search import SearchKeyTerm
+from models.search import SearchKeyword
 from stored import config
 
 
@@ -54,10 +54,10 @@ def parse_keyword(df1):
         adgroup_id = query_adgroup_id(row['Ad group'])
         search_id = query_search_id(keyword_id[0])
         if search_id is None:
-            insert_keyword(SearchKeyTerm, {'keyword_id': keyword_id[0], 'ad_group_id': adgroup_id[0],
+            insert_keyword(SearchKeyword, {'keyword_id': keyword_id[0], 'ad_group_id': adgroup_id[0],
                                            'created_time': datetime.datetime.now()})
         else:
-            update_on_dupkey_search(SearchKeyTerm, {'id': search_id[0], 'keyword_id': keyword_id[0],
+            update_on_dupkey_search(SearchKeyword, {'id': search_id[0], 'keyword_id': keyword_id[0],
                                                     'ad_group_id': adgroup_id[0],
                                                     'created_time': datetime.datetime.now()})
 
@@ -136,9 +136,9 @@ def parse_search_term(df1):
             ad_group_id = ad_group_id[0]
         term_id = query_search_id(keyword_id[0])
         if term_id is None:
-            insert_keyword(SearchKeyTerm, {'keyword_id': keyword_id[0], 'ad_group_id': ad_group_id,
+            insert_keyword(SearchKeyword, {'keyword_id': keyword_id[0], 'ad_group_id': ad_group_id,
                                            'created_time': datetime.datetime.now()})
         else:
-            update_on_dupkey_search(SearchKeyTerm, {'id': term_id[0], 'keyword_id': keyword_id[0],
+            update_on_dupkey_search(SearchKeyword, {'id': term_id[0], 'keyword_id': keyword_id[0],
                                                     'ad_group_id': ad_group_id,
                                                     'created_time': datetime.datetime.now()})

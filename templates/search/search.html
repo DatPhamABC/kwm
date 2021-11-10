@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block css %}
     <link rel="stylesheet" href="{{ url_for('static', filename='/search.css') }}">
+    <script src="/static/search.js"></script>
 {% endblock %}
 
 {% block title %}
@@ -94,6 +95,18 @@
                                         {%endfor%}
                                     </ul>
                                 </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-kwtype-button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Keyword type
+                                    </button>
+                                    <input type="hidden" name="kwtype-filter" value="" id="kwtype-input"/>
+                                    <ul id="dropdown-menu-kwtype" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item">Tất cả</a></li>
+                                        <li class="divider"></li>
+                                        <li><a class="dropdown-item">positive</a></li>
+                                        <li><a class="dropdown-item">negative</a></li>
+                                    </ul>
+                                </div>
                             </div>
                             <div class="input-bar-btn">
                                 <span class="input-group-btn">
@@ -148,54 +161,4 @@
         </tbody>
     </table>
     </div>
-<script>
-    $("#dropdown-campaign-button").on("click", function() {
-        $('#dropdown-menu-campaign').toggleClass('open');
-    });
-    $("#dropdown-menu-campaign li").on("click", function() {
-        $('#dropdown-campaign-button').text($(this).text());
-        $('#dropdown-menu-campaign').removeClass('open');
-        $('#campaign-input').val($(this).text());
-    });
-
-    $("#dropdown-adgroup-button").on("click", function() {
-        $('#dropdown-menu-adgroup').toggleClass('open');
-    });
-    $("#dropdown-menu-adgroup li").on("click", function() {
-        $('#dropdown-adgroup-button').text($(this).text());
-        $('#dropdown-menu-adgroup').removeClass('open');
-        $('#adgroup-input').val($(this).text());
-    });
-
-    $("#dropdown-province-button").on("click", function() {
-        $('#dropdown-menu-province').toggleClass('open');
-    });
-    $("#dropdown-menu-province li").on("click", function() {
-        $('#dropdown-province-button').text($(this).text());
-        $('#dropdown-menu-province').removeClass('open');
-        $('#province-input').val($(this).text());
-    });
-
-    $("#dropdown-district-button").on("click", function() {
-        $('#dropdown-menu-district').toggleClass('open');
-    });
-    $("#dropdown-menu-district li").on("click", function() {
-        $('#dropdown-district-button').text($(this).text());
-        $('#dropdown-menu-district').removeClass('open');
-        $('#district-input').val($(this).text());
-    });
-
-    $("#dropdown-hotel-button").on("click", function() {
-        $('#dropdown-menu-hotel').toggleClass('open');
-    });
-    $("#dropdown-menu-hotel li").on("click", function() {
-        $('#dropdown-hotel-button').text($(this).text());
-        $('#dropdown-menu-hotel').removeClass('open');
-        $('#hotel-input').val($(this).text());
-    });
-
-    $(document).ready(function () {
-        $('#table-detail').DataTable();
-    });
-</script>
 {% endblock %}

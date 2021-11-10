@@ -4,7 +4,8 @@ from werkzeug.utils import redirect
 from flask import Flask, render_template, request
 import pandas as pd
 
-from db.db_search import Filter
+from db.db_search import Filter, get_campaign_list, get_adgroup_list, get_province_list, get_district_list, \
+    get_hotel_list
 from stored.XLSXparser import parse_xlsx
 from stored import config
 
@@ -52,14 +53,15 @@ def search_home():
                     request.args.get('adgroup-filter'),
                     request.args.get('province-filter'),
                     request.args.get('district-filter'),
-                    request.args.get('hotel-filter'))
+                    request.args.get('hotel-filter'),
+                    request.args.get('kwtype-filter'))
     print(filter.get_keyword_list())
     return render_template('/search/search.html',
-                           campaign_list=filter.get_campaign_list(),
-                           adgroup_list=filter.get_adgroup_list(),
-                           province_list=filter.get_province_list(),
-                           district_list=filter.get_district_list(),
-                           hotel_list=filter.get_hotel_list(),
+                           campaign_list=get_campaign_list(),
+                           adgroup_list=get_adgroup_list(),
+                           province_list=get_province_list(),
+                           district_list=get_district_list(),
+                           hotel_list=get_hotel_list(),
                            keyword_list=filter.get_keyword_list())
 
 
@@ -74,8 +76,8 @@ def keyword_edit_negative(id, name, form_type, match_type, level, level_name):
                            level=level, level_name=level_name)
 
 
-@app.route("/edit/<id>+<name>+<form_type>+<match_type>+<level>+<level_name>", defaults={'target_name': None, 'target_type': None})
-@app.route("/edit/<id>+<name>+<form_type>+<match_type>+<level>+<level_name>+<target_name>+<target_type>")
+@app.route("/edit/<id>+<name>+<form_type>+<match_type>+<level>+<level_name>+<target_name>+<target_type>",
+           defaults={'target_name': None, 'target_type': None})
 def keyword_edit_positive(id, name, form_type, match_type, level, level_name, target_name, target_type):
     name = unquote_plus(name)
     form_type = unquote_plus(form_type)
