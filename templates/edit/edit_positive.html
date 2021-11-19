@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='/search.css') }}">
+    <script src="/static/edit.js"></script>
+{% endblock %}
+
+{% block title %}
+    Edit
+{% endblock %}
+
+{% block navbar %}
+<ul class="navbar-nav me-auto">
+    <li class="nav-item">
+        <a class="nav-link" href="/import">Import</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/export">Export</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/search">Tìm kiếm</a>
+    </li>
+    </li>
+</ul>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-info alert-dismissable">
+                {% for message in messages %}
+                    <a class="panel-close close" data-dismiss="alert">×</a>
+                    <i class="fa fa-coffee"></i>
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <h3>Keyword: {{ name }}</h3>
+    <div class="row">
+        <div class="col keyword-info">
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label class="col-lg-3">Form type:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" value={{ form_type }} readonly="readonly">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3">Match type:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" value={{ match_type }} readonly="readonly">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3">Level:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" value={{ level }} readonly="readonly">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3">Level name:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" value={{ level_name }} readonly="readonly">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3">Time Zone:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" value={{ level_name }} readonly="readonly">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="col change-info">
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Form type:</label>
+                        <div class="col-lg-8">
+                            <input class="form-control" type="text" value={{ form_type }}>
+                        </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Match type:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" value={{ match_type }}>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Level:</label>
+                        <div class="col-lg-8">
+                            <input class="form-control" type="text" value={{ level }}>
+                        </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Level name:</label>
+                        <div class="col-lg-8">
+                            <input class="form-control" type="text" value={{ level_name }}>
+                        </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Time Zone:</label>
+                    <div class="col-lg-8">
+                        <div class="ui-select">
+                            <select id="user_time_zone2" class="form-control">
+                                <option value="Hawaii">(GMT-10:00) Hawaii</option>
+                                <option value="Alaska">(GMT-09:00) Alaska</option>
+                                <option value="Pacific Time (US &amp; Canada)">(GMT-08:00) Pacific Time (US &amp; Canada)</option>
+                                <option value="Arizona">(GMT-07:00) Arizona</option>
+                                <option value="Mountain Time (US &amp; Canada)">(GMT-07:00) Mountain Time (US &amp; Canada)</option>
+                                <option value="Central Time (US &amp; Canada)" selected="selected">(GMT-06:00) Central Time (US &amp; Canada)</option>
+                                <option value="Eastern Time (US &amp; Canada)">(GMT-05:00) Eastern Time (US &amp; Canada)</option>
+                                <option value="Indiana (East)">(GMT-05:00) Indiana (East)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="container-fluid button-container">
+        <div class="d-flex justify-content-center">
+            <div class="column">
+                <button> >> </button>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center">
+            <div class="column">
+                <button>Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
