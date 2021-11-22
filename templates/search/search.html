@@ -2,6 +2,9 @@
 {% block css %}
     <link rel="stylesheet" href="{{ url_for('static', filename='/search.css') }}">
     <script src="/static/search.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
 {% endblock %}
 
 {% block title %}
@@ -12,9 +15,6 @@
 <ul class="navbar-nav me-auto">
     <li class="nav-item">
         <a class="nav-link" href="/import">Import</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/export">Export</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" style="color:#FFF3E4" href="/search">Tìm kiếm</a>
@@ -31,81 +31,75 @@
                         <div class="input-block">
                             <div class="input-group-btn search-panel">
                                 <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-campaign-button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Campaign
-                                    </button>
-                                    <input type="hidden" name="campaign-filter" value="" id="campaign-input"/>
-                                    <ul id="dropdown-menu-campaign" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                        <li><a class="dropdown-item">Tất cả</a></li>
-                                        <li class="divider"></li>
-                                        {% for item in campaign_list %}
-                                            <li><a class="dropdown-item">{{item[0]}}</a></li>
-                                        {%endfor%}
-                                    </ul>
+                                    <label for="campaign_input">Campaign </label>
+                                    <select id="campaign_input" name="campaign-filter" class="form-select edit">
+                                        <optgroup>
+                                            <option value="Tất cả">Tất cả</option>
+                                            <option disabled>________</option>
+                                            {% for item in campaign_list %}
+                                                <option value="{{item[0]}}">{{item[0]}}</option>
+                                            {%endfor%}
+                                        </optgroup>
+                                    </select>
                                 </div>
                                 <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-adgroup-button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Ad group
-                                    </button>
-                                    <input type="hidden" name="adgroup-filter" value="" id="adgroup-input"/>
-                                    <ul id="dropdown-menu-adgroup" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                        <li><a class="dropdown-item">Tất cả</a></li>
-                                        <li class="divider"></li>
-                                        {% for item in adgroup_list %}
-                                            <li><a class="dropdown-item">{{item[0]}}</a></li>
-                                        {%endfor%}
-                                    </ul>
+                                    <label for="adgroup_input">Adgroup</label>
+                                    <select id="adgroup_input" name="adgroup-filter" class="form-select edit">
+                                        <optgroup>
+                                            <option value="Tất cả">Tất cả</option>
+                                            <option disabled>________</option>
+                                            {% for item in adgroup_list %}
+                                                <option value="{{item[0]}}">{{item[0]}}</option>
+                                            {%endfor%}
+                                        </optgroup>
+                                    </select>
                                 </div>
                                 <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-province-button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Province
-                                    </button>
-                                    <input type="hidden" name="province-filter" value="" id="province-input"/>
-                                    <ul id="dropdown-menu-province" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                        <li><a class="dropdown-item">Tất cả</a></li>
-                                        <li class="divider"></li>
-                                        {% for item in province_list %}
-                                            <li><a class="dropdown-item">{{item[0]}}</a></li>
-                                        {%endfor%}
-                                    </ul>
+                                    <label for="province_input">Province</label>
+                                    <select id="province_input" name="province-filter" class="form-select edit">
+                                        <optgroup>
+                                            <option value="Tất cả">Tất cả</option>
+                                            <option disabled>________</option>
+                                            {% for item in province_list %}
+                                                <option value="{{item[0]}}">{{item[0]}}</option>
+                                            {%endfor%}
+                                        </optgroup>
+                                    </select>
                                 </div>
                                 <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-district-button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        District
-                                    </button>
-                                    <input type="hidden" name="district-filter" value="" id="district-input"/>
-                                    <ul id="dropdown-menu-district" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                        <li><a class="dropdown-item">Tất cả</a></li>
-                                        <li class="divider"></li>
-                                        {% for item in district_list %}
-                                            <li><a class="dropdown-item">{{item[0]}}</a></li>
-                                        {%endfor%}
-                                    </ul>
+                                    <label for="district_input">District</label>
+                                    <select id="district_input" name="district-filter" class="form-select edit">
+                                        <optgroup>
+                                             <option value="Tất cả">Tất cả</option>
+                                            <option disabled>________</option>
+                                            {% for item in district_list %}
+                                                <option value="{{item[0]}}">{{item[0]}}</option>
+                                            {%endfor%}
+                                        </optgroup>
+                                    </select>
                                 </div>
                                 <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-hotel-button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Hotel
-                                    </button>
-                                    <input type="hidden" name="hotel-filter" value="" id="hotel-input"/>
-                                    <ul id="dropdown-menu-hotel" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                        <li><a class="dropdown-item">Tất cả</a></li>
-                                        <li class="divider"></li>
-                                        {% for item in hotel_list %}
-                                            <li><a class="dropdown-item">{{item[0]}}</a></li>
-                                        {%endfor%}
-                                    </ul>
+                                    <label for="hotel_input">Hotel</label>
+                                    <select id="hotel_input" name="hotel-filter" class="form-select edit">
+                                        <optgroup>
+                                            <option value="Tất cả">Tất cả</option>
+                                            <option disabled>________</option>
+                                            {% for item in hotel_list %}
+                                                <option value="{{item[0]}}">{{item[0]}}</option>
+                                            {%endfor%}
+                                        </optgroup>
+                                    </select>
                                 </div>
                                 <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-kwtype-button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Keyword type
-                                    </button>
-                                    <input type="hidden" name="kwtype-filter" value="" id="kwtype-input"/>
-                                    <ul id="dropdown-menu-kwtype" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                        <li><a class="dropdown-item">Tất cả</a></li>
-                                        <li class="divider"></li>
-                                        <li><a class="dropdown-item">positive</a></li>
-                                        <li><a class="dropdown-item">negative</a></li>
-                                    </ul>
+                                    <label for="kwtype_input">Keyword type</label>
+                                    <select id="kwtype_input" name="kwtype-filter" class="form-select edit">
+                                        <optgroup>
+                                            <option value="Tất cả">Tất cả</option>
+                                            <option disabled>________</option>
+                                            <option value="positive">positive</option>
+                                            <option value="negative">negative</option>
+                                        </optgroup>
+                                    </select>
                                 </div>
                             </div>
                             <div class="input-bar-btn">
@@ -120,45 +114,42 @@
         </div>
     </div>
     <div>
-    <table id="table-detail" class="table table-striped">
-        <thead>
-            <tr>
-                <th>Keyword</th>
-                <th>Level</th>
-                <th>Match type</th>
-                <th>Positive/Negative
-                <th>Level name</th>
-                <th>Target name</th>
-                <th>Target type</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in keyword_list %}
+        <table id="table-detail" class="table table-striped">
+            <thead>
                 <tr>
-                    <td>{{ item[1] }}</td>
-                    <td>{{ item[3] }}</td>
-                    <td>{{ item[2] }}</td>
-                    <td>{{ item[4] }}</td>
-                    <td>{{ item[5] }}</td>
-
-                    <td>{{ item[6] }}</td>
-                    <td>{{ item[7] }}</td>
-                    {% if item[4] == 'positive' %}
-                        <td>
-                            <a href="{{ url_for('.keyword_edit_positive', id=item[0], name=item[1],
-                            form_type=item[4], match_type=item[2], level=item[3], level_name=item[5],
-                            target_name=item[6], target_type=item[7])|urlencode }}">Sửa</a>
-                        </td>
-                    {% else %}
-                        <td>
-                            <a href="{{ url_for('.keyword_edit_negative', id=item[0], name=item[1],
-                            form_type=item[4], match_type=item[2], level=item[3], level_name=item[5])|urlencode }}">Sửa</a>
-                        </td>
-                    {% endif %}
+                    <th>ID</th>
+                    <th>Keyword</th>
+                    <th>Level</th>
+                    <th>Positive/Negative</th>
+                    <th>Level name</th>
+                    <th>Target name</th>
+                    <th>Target type</th>
+                    <th></th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for item in keyword_list %}
+                    <tr>
+                        <td>{{ item[0] }}</td>
+                        {% if item[2] == 'phrase' %}
+                            <td>"{{ item[1] }}"</td>
+                        {% elif item[2] == 'exact' %}
+                            <td>[{{ item[1] }}]</td>
+                        {% else %}
+                            <td>{{ item[1] }}</td>
+                        {% endif %}
+                        <td>{{ item[3] }}</td>
+                        <td>{{ item[4] }}</td>
+                        <td>{{ item[5] }}</td>
+                        <td>{{ item[6] }}</td>
+                        <td>{{ item[7] }}</td>
+                        <td>
+                            <a href="{{ url_for('.keyword_edit', id=item[0])|urlencode }}">Sửa</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a class="btn btn-secondary" href="/export">Export</a>
     </div>
 {% endblock %}

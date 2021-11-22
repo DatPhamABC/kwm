@@ -3,7 +3,7 @@ from sqlalchemy.dialects.mysql import insert
 
 from db import connection
 from models.negative import NegativeKeyword
-from stored import config
+from utils import config
 
 
 def conn(source):
@@ -15,28 +15,29 @@ def conn(source):
 
 
 def insert_keyword(model, insert_dict):
-    insert_db = insert(model).values(**insert_dict)
+    insert_db = insert(model).values(insert_dict)
     conn('default').execute(insert_db)
 
 
 def update_on_dupkey(model, insert_dict):
-    insert_db = insert(model).values(**insert_dict)
-    update_on_duplicate_key = insert_db.on_duplicate_key_update(word=insert_db.inserted.word,
+    insert_db = insert(model).values(insert_dict)
+    update_on_duplicate_key = insert_db.on_duplicate_key_update(id=insert_db.inserted.id,
                                                                 type=insert_db.inserted.type,
                                                                 is_active=insert_db.inserted.is_active)
     conn('default').execute(update_on_duplicate_key)
 
 
 def update_on_dupkey_search(model, insert_dict):
-    insert_db = insert(model).values(**insert_dict)
+    insert_db = insert(model).values(insert_dict)
     update_on_duplicate_key = insert_db.on_duplicate_key_update(keyword_id=insert_db.inserted.keyword_id,
                                                                 target_id=insert_db.inserted.target_id,
+                                                                target_type=insert_db.inserted.target_type,
                                                                 ad_group_id=insert_db.inserted.ad_group_id)
     conn('default').execute(update_on_duplicate_key)
 
 
 def update_on_dupkey_negative(model, insert_dict):
-    insert_db = insert(model).values(**insert_dict)
+    insert_db = insert(model).values(insert_dict)
     update_on_duplicate_key = insert_db.on_duplicate_key_update(campaign_id=insert_db.inserted.campaign_id,
                                                                 ad_group_id=insert_db.inserted.ad_group_id,
                                                                 keyword_id=insert_db.inserted.keyword_id)

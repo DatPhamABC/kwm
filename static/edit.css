@@ -1,0 +1,25 @@
+.btn {
+  margin-top: 10px;
+}
+
+div.col {
+  text-align: center;
+}
+
+form.form-horizontal {
+  display: inline-block;
+  width: 400px;
+}
+
+div.col-lg-8 {
+  display: inline-block;
+  margin-top: 20px;
+}
+
+label.col-lg-3 {
+  text-align: left;
+}
+
+.button-form {
+  display: inline-block;
+}

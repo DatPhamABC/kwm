@@ -1,0 +1,95 @@
+#negative and campaign
+    'SELECT nk.id, kw.word, kw.type, \'campaign\' as filter_by, \'negative\' as keyword_type, '
+    '(SELECT name FROM ads.campaigns WHERE id = :campaign_id) as campaign_name '
+    'FROM keywords.negative nk '
+    'LEFT JOIN keywords.keyword kw ON nk.keyword_id = kw.id '
+    'WHERE nk.campaign_id = :campaign_id',
+    {'campaign_id': campaign_id}
+
+#negative and adgroup
+    'SELECT nk.id, kw.word, kw.type, \'ad_group\' as filter_by, \'negative\' as keyword_type, '
+    '(SELECT name FROM ads.ad_groups WHERE id = nk.ad_group_id) as adgroup_name '
+    'FROM keywords.negative nk '
+    'LEFT JOIN keywords.keyword kw ON nk.keyword_id = kw.id '
+    'WHERE nk.ad_group_id = :adgroup_id',
+    {'adgroup_id': adgroup_id}
+
+#possitive and adgroup
+    'SELECT sk.id, kw.word, kw.type, \'ad_group\' as filter_by, \'positive\' as keyword_type, '
+    '(SELECT name FROM ads.ad_groups WHERE id = sk.ad_group_id) as adgroup_name, '
+    'CASE WHEN sk.target_type = \'hotels\' '
+    'THEN (SELECT hotel_name FROM hotels.hotels WHERE id = sk.target_id) '
+    'WHEN sk.target_type = \'district\' '
+    'THEN (SELECT name FROM hotels.district WHERE id = sk.target_id) '
+    'WHEN sk.target_type = \'province\' '
+    'THEN (SELECT name FROM hotels.province WHERE id = sk.target_id) '
+    'ELSE Null '
+    'END as target_name, '
+    'sk.target_type, kw.is_active '
+    'FROM keywords.search sk '
+    'LEFT JOIN keywords.keyword kw ON sk.keyword_id = kw.id '
+    'WHERE sk.ad_group_id = :adgroup_id',
+    {'adgroup_id': adgroup_id}
+
+<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-kwtype-button" data-bs-toggle="dropdown" aria-expanded="false">
+    Keyword type
+</button>
+<input type="hidden" name="kwtype-filter" value="" id="kwtype-input"/>
+<ul id="dropdown-menu-kwtype" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+    <li><a class="dropdown-item">Tất cả</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item">positive</a></li>
+    <li><a class="dropdown-item">negative</a></li>
+</ul>
+
+
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# @auth: Nguyen Van Do - nguyendo94vn@gmail.com
+from sqlalchemy import func
+from sqlalchemy.dialects.mysql import insert
+
+from app.db import connection
+
+sessions = dict()
+r = None
+
+def conn(source):
+  session = sessions.get(source, None)
+  if session is None:
+    session = connection.db(source)
+    sessions[source] = session
+  return session
+
+def default():
+  return conn('default')
+
+def upsert(model, insert_dict, conn):
+  """model can be a db.Model or a table(), insert_dict should contain a primary or unique key."""
+  inserted = insert(model).values(**insert_dict)
+  upserted = inserted.on_duplicate_key_update(**{k: inserted.inserted[k]
+                              for k, v in insert_dict.items()})
+  return conn.execute(upserted)
+
+def upsert(model, insert_dict):
+  """model can be a db.Model or a table(), insert_dict should contain a primary or unique key."""
+  inserted = insert(model).values(**insert_dict)
+  upserted = inserted.on_duplicate_key_update(**{k: inserted.inserted[k]
+                              for k, v in insert_dict.items()})
+  return default().execute(upserted)
+
+
+
+from app.db import session as db_session
+
+
+conn = db_session.default()
+
+
+query = conn.query(Hotel, TravelDestination, DSAHotel, HotelPrice.ca_id, func.min(HotelPrice.base_price).label('base_price'),\
+    func.min(HotelPrice.price).label('price'), func.min(HotelPrice.sale_price).label('sale_price'), HotelImage.image_url)\
+    .join(HotelPrice, Hotel.id == HotelPrice.hotel_id)\
+    .join(HotelImage, Hotel.id == HotelImage.hotel_id)\
+
+
+conn.bulk_save_objects(dsa_hotels)
