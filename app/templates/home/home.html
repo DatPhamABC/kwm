@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}
+    Home
+{% endblock %}
+
+{% block navbar %}
+<ul class="navbar-nav me-auto">
+    <li class="nav-item">
+        <a class="nav-link" href="/import">Import</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/search">Tìm kiếm</a>
+    </li>
+</ul>
+<div class="logout">
+    <a class="nav-link" style="color:#9ab6fc" href="/logout">Logout</a>
+</div>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+    </div>
+{% endblock %}

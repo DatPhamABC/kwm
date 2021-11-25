@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='/edit.css') }}">
+    <script src="/static/edit_positive.js"></script>
+{% endblock %}
+
+{% block title %}
+    Edit
+{% endblock %}
+
+{% block navbar %}
+<ul class="navbar-nav me-auto">
+    <li class="nav-item">
+        <a class="nav-link" href="/import">Import</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/search">Tìm kiếm</a>
+    </li>
+</ul>
+<div class="logout">
+    <a class="nav-link" style="color:#9ab6fc" href="/logout">Logout</a>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <h3>Keyword: {{ keyword }}</h3>
+    <div class="row">
+        <div class="col keyword-info">
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label class="col-lg-3">Form type:</label>
+                    <div class="col-lg-8">
+                        <input id="form-type" class="form-control" type="text" value="{{form_type}}" readonly="readonly">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3">Match type:</label>
+                    <div class="col-lg-8">
+                        <input id="match-type" class="form-control" type="text" value="{{match_type}}" readonly="readonly">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3">Level:</label>
+                    <div class="col-lg-8">
+                        <input id="level" class="form-control" type="text" value="{{level}}" readonly="readonly">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3">Ad group:</label>
+                    <div class="col-lg-8">
+                        <input id="adgroup" class="form-control" type="text" value="{{ad_group_name}}" readonly="readonly">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3">Target type:</label>
+                    <div class="col-lg-8">
+                        <input id="target-type" class="form-control" type="text" value="{{target_type}}" readonly="readonly">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3">Hotel:</label>
+                    <div class="col-lg-8">
+                        <input id="hotel" class="form-control" type="text" value="{{hotel}}" readonly="readonly">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3">District:</label>
+                    <div class="col-lg-8">
+                        <input id="district" class="form-control" type="text" value="{{district}}" readonly="readonly">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3">Province:</label>
+                    <div class="col-lg-8">
+                        <input id="province" class="form-control" type="text" value="{{province}}" readonly="readonly">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="col change-info">
+            <form id="keyword-update-form" class="form-horizontal" role="form" method="POST" action="/edit/update/positive">
+                <input type="hidden" name="keyword" value="{{keyword}}">
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Form type:</label>
+                        <div class="col-lg-8">
+                            <input class="form-control" type="text" value="{{form_type}}" readonly="readonly">
+                        </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Match type:</label>
+                    <div class="col-lg-8">
+                        <select id="match-type-select" name="match_type" class="form-select">
+                            <option hidden disabled selected value> -- select an option -- </option>
+                            <option value="broad">broad</option>
+                            <option value="exact">exact</option>
+                            <option value="phrase">phrase</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Level:</label>
+                    <div class="col-lg-8">
+                        <div class="ui-select">
+                            <input class="form-control" type="text" value="{{level}}" readonly="readonly">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Adgroup:</label>
+                    <div class="col-lg-8">
+                        <div class="ui-select">
+                            <select id="adgroup-select" name="adgroup" class="form-select">
+                                <option hidden disabled selected value> -- select an option -- </option>
+                                <option value="None">None</option>
+                                {% for item in adgroup_list %}
+                                    <option value="{{item[0]}}">{{item[0]}}</option>
+                                {%endfor%}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Target type:</label>
+                    <div class="col-lg-8">
+                        <div class="ui-select">
+                            <select id="target-select" name="target_type" class="form-select">
+                                <option hidden disabled selected value> -- select an option -- </option>
+                                <option value="None">None</option>
+                                <option value="hotel">Hotel</option>
+                                <option value="district">District</option>
+                                <option value="province">Province</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Hotel:</label>
+                    <div class="col-lg-8">
+                        <div class="ui-select">
+                            <select id="hotel-select" name="hotel" class="form-select" disabled>
+                                <option hidden disabled selected value> -- select an option -- </option>
+                                <option value="None">None</option>
+                                {% for item in hotel_list %}
+                                    <option value="{{item[0]}}">{{item[0]}}</option>
+                                {%endfor%}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">District:</label>
+                    <div class="col-lg-8">
+                        <div class="ui-select">
+                            <select id="district-select" name="district" class="form-select" disabled>
+                                <option hidden disabled selected value> -- select an option -- </option>
+                                <option value="None">None</option>
+                                {% for item in district_list %}
+                                    <option value="{{item[0]}}">{{item[0]}}</option>
+                                {%endfor%}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Province:</label>
+                    <div class="col-lg-8">
+                        <div class="ui-select">
+                            <select id="province-select" name="province" class="form-select" disabled>
+                                <option hidden disabled selected value> -- select an option -- </option>
+                                <option value="None">None</option>
+                                {% for item in province_list %}
+                                    <option value="{{item[0]}}">{{item[0]}}</option>
+                                {%endfor%}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="container-fluid button-container">
+        <div class="d-flex justify-content-center">
+            <div class="column">
+                <button class="btn btn-secondary" id="pass-button"> >> </button>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center" id="save-button">
+            <div class="column">
+                <form class="button-form" action="/edit/delete" method="POST">
+                    <input name="delete-positive-id" type="hidden" value="{{positive_id}}">
+                    <input name="delete-keyword-id" type="hidden" value="{{id}}">
+                    <input class="btn btn-danger" type="submit" value="Xóa">
+                </form>
+                <input class="btn btn-secondary" type="submit" form="keyword-update-form" value="Lưu">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

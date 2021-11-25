@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='/import.css') }}">
+{% endblock %}
+
+{% block title %}
+    Import
+{% endblock %}
+
+{% block navbar %}
+<ul class="navbar-nav me-auto">
+    <li class="nav-item">
+        <a class="nav-link" style="color:#FFF3E4" href="/import">Import</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/search">Tìm kiếm</a>
+    </li>
+</ul>
+<div class="logout">
+    <a class="nav-link" style="color:#9ab6fc" href="/logout">Logout</a>
+</div>
+{% endblock %}
+
+{% block body %}
+    <div class="wrapper">
+        <div class="container">
+            <h1>Upload a file</h1>
+            <div class="upload-container">
+                <div class="border-container">
+                    <form action="/import/xlsximport" method="POST" enctype="multipart/form-data">
+                        <input type="file" id="myfile" name="xlsxfile">
+                        <button type="submit">Lưu</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

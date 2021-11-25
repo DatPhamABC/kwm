@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block css %}
+    <script src="/static/import_noti.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.11.3/sl-1.3.3/datatables.min.css"/>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.11.3/sl-1.3.3/datatables.min.js"></script>
+{% endblock %}
+
+{% block title %}
+    Import
+{% endblock %}
+
+{% block navbar %}
+<ul class="navbar-nav me-auto">
+    <li class="nav-item">
+        <a class="nav-link" style="color:#FFF3E4" href="/import">Import</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/search">Tìm kiếm</a>
+    </li>
+</ul>
+<div class="logout">
+    <a class="nav-link" style="color:#9ab6fc" href="/logout">Logout</a>
+</div>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div>
+            Có {{ insert_count }} keyword đã được thêm vào
+        </div>
+        <div>
+            Có {{ update_count }} keyword đã được cập nhật
+        </div>
+        {% if insert_count != 0 %}
+            <h3>Insert keywords</h3>
+            <table id="insert-detail" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Keyword</th>
+                        <th>Match type</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in insert_data %}
+                        <tr>
+                            <td>{{ item['word'] }}</td>
+                            <td>{{ item['type'] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        {% if update_count != 0 %}
+            <h3>Update keywords</h3>
+            <table id="update-detail" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Keyword</th>
+                        <th>Match type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in update_data %}
+                        <tr>
+                            <td>{{ item['word'] }}</td>
+                            <td>{{ item['type'] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+{% endblock %}
