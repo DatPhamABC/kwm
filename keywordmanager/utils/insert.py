@@ -1,9 +1,9 @@
 from sqlalchemy import and_, or_
 from sqlalchemy.dialects.mysql import insert
 
-from app.db import connection
-from app.models.negative import NegativeKeyword
-from app.utils import config
+from keywordmanager.db import connection
+from keywordmanager.models.negative import NegativeKeyword
+from keywordmanager.utils import config
 
 
 def conn(source):

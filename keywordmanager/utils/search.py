@@ -1,14 +1,14 @@
 from sqlalchemy import text, literal, Unicode, case, asc, delete
 
-from app.models.ad_groups import AdGroup
-from app.models.campaigns import Campaign
-from app.models.district import District
-from app.models.hotels import Hotel
-from app.models.keyword import Keyword
-from app.models.negative import NegativeKeyword
-from app.models.province import Province
-from app.models.search import SearchKeyword
-from app.utils.db_insert import conn
+from keywordmanager.models.ad_groups import AdGroup
+from keywordmanager.models.campaigns import Campaign
+from keywordmanager.models.district import District
+from keywordmanager.models.hotels import Hotel
+from keywordmanager.models.keyword import Keyword
+from keywordmanager.models.negative import NegativeKeyword
+from keywordmanager.models.province import Province
+from keywordmanager.models.search import SearchKeyword
+from keywordmanager.utils.db_insert import conn
 
 
 class Filter:
