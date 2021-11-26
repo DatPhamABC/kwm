@@ -3,9 +3,9 @@ import datetime
 from keywordmanager.models.keyword import typeEnum as match_typeEnum, Keyword
 from keywordmanager.models.negative import NegativeKeyword
 from keywordmanager.models.search import SearchKeyword
-from keywordmanager.utils.db_insert import query_keyword_id, query_campaign_id, query_adgroup_id, update_on_dupkey, \
+from keywordmanager.utils.insert import query_keyword_id, query_campaign_id, query_adgroup_id, update_on_dupkey, \
     update_on_dupkey_negative, query_negative_id, update_on_dupkey_search, query_search_id
-from keywordmanager.utils.db_search import get_hotel_id, get_district_id, get_province_id
+from keywordmanager.utils.search import get_hotel_id, get_district_id, get_province_id
 
 
 def update_change_negative(keyword, match_type, old_adgroup, adgroup, old_campaign, campaign):
