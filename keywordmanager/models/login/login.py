@@ -1,11 +1,11 @@
 from flask import flash
 from flask_wtf import FlaskForm
-from app.models.login.user import User
+from keywordmanager.models.login.user import User
 from werkzeug.security import check_password_hash, generate_password_hash
 from wtforms import TextField, PasswordField, SubmitField
 from wtforms.validators import Required, Email
 
-from app.utils.db_insert import conn
+from keywordmanager.utils.insert import conn
 
 
 class LoginForm(FlaskForm):

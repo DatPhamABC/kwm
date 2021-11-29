@@ -3,7 +3,7 @@ from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.orm import declarative_base
 from flask_login import UserMixin
 
-from app.utils.db_insert import conn
+from keywordmanager.utils.insert import conn
 
 Base = declarative_base()
 

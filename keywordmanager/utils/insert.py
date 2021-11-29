@@ -1,17 +1,8 @@
 from sqlalchemy import and_, or_
 from sqlalchemy.dialects.mysql import insert
 
-from keywordmanager.db import connection
-from keywordmanager.models.negative import NegativeKeyword
-from keywordmanager.utils import config
-
-
-def conn(source):
-    session = config.sessions.get(source, None)
-    if session is None:
-        session = connection.db(source)
-        config.sessions[source] = session
-    return session
+from keywordmanager.db.session import conn
+from keywordmanager.models.keywords.negative import NegativeKeyword
 
 
 def insert_keyword(model, insert_dict):

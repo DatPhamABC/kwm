@@ -1,5 +1,6 @@
 import configparser
 import json
+
 from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import sessionmaker
@@ -10,10 +11,10 @@ POOL_SIZE_DEFAULT = 5
 
 
 def db(source):
-    config = configparser.RawConfigParser(allow_no_value=True)
-    config.read('application.ini')
+    configuration = configparser.RawConfigParser(allow_no_value=True)
+    configuration.read('../application.ini')
 
-    dbs_config = json.loads(config["database"]["sources"])
+    dbs_config = json.loads(configuration["database"]["sources"])
     db_config = dbs_config.get(source)
     data_source = extract_datasource(db_config)
     pool_size = POOL_SIZE_DEFAULT

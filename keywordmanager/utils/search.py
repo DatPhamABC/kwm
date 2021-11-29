@@ -1,14 +1,14 @@
 from sqlalchemy import text, literal, Unicode, case, asc, delete
 
-from keywordmanager.models.ad_groups import AdGroup
-from keywordmanager.models.campaigns import Campaign
-from keywordmanager.models.district import District
-from keywordmanager.models.hotels import Hotel
-from keywordmanager.models.keyword import Keyword
-from keywordmanager.models.negative import NegativeKeyword
-from keywordmanager.models.province import Province
-from keywordmanager.models.search import SearchKeyword
-from keywordmanager.utils.db_insert import conn
+from keywordmanager.db.session import conn
+from keywordmanager.models.ads.ad_groups import AdGroup
+from keywordmanager.models.ads.campaigns import Campaign
+from keywordmanager.models.hotels.district import District
+from keywordmanager.models.hotels.hotels import Hotel
+from keywordmanager.models.keywords.keyword import Keyword
+from keywordmanager.models.keywords.negative import NegativeKeyword
+from keywordmanager.models.hotels.province import Province
+from keywordmanager.models.keywords.search import SearchKeyword
 
 
 class Filter:
@@ -99,7 +99,7 @@ def query_negative(campaign_id, adgroup_id, hotel_id, district_id, province_id):
         query = conn('default').query(
             Keyword.id,
             NegativeKeyword.id,
-            Keyword.word, text(Keyword.type.name),
+            Keyword.word, Keyword.type,
             literal("campaign", type_=Unicode).label('filter_by'),
             literal("negative", type_=Unicode).label('keyword_type'), Campaign.name
         ).select_from(NegativeKeyword) \
@@ -115,7 +115,7 @@ def query_negative(campaign_id, adgroup_id, hotel_id, district_id, province_id):
         query = conn('default').query(
             Keyword.id,
             NegativeKeyword.id,
-            Keyword.word, text(Keyword.type.name),
+            Keyword.word, Keyword.type,
             literal('ad_group', type_=Unicode).label('filter_by'),
             literal('negative', type_=Unicode).label('keyword_type'),
             AdGroup.name
@@ -131,7 +131,7 @@ def query_negative(campaign_id, adgroup_id, hotel_id, district_id, province_id):
         query = conn('default').query(
             Keyword.id,
             NegativeKeyword.id,
-            Keyword.word, text(Keyword.type.name),
+            Keyword.word, Keyword.type,
             literal('ad_group', type_=Unicode).label('filter_by'),
             literal('negative', type_=Unicode).label('keyword_type'),
             AdGroup.name
@@ -144,7 +144,7 @@ def query_negative(campaign_id, adgroup_id, hotel_id, district_id, province_id):
         query = conn('default').query(
             Keyword.id,
             NegativeKeyword.id,
-            Keyword.word, text(Keyword.type.name),
+            Keyword.word, Keyword.type,
             literal('campaign', type_=Unicode).label('filter_by'),
             literal('negative', type_=Unicode).label('keyword_type'),
             Campaign.name
@@ -165,7 +165,7 @@ def query_positive(campaign_id, adgroup_id, hotel_id, district_id, province_id):
             Keyword.id,
             SearchKeyword.id,
             Keyword.word,
-            text(Keyword.type.name),
+            Keyword.type,
             literal('ad_group', type_=Unicode).label('filter_by'),
             literal('positive', type_=Unicode).label('keyword_type'),
             AdGroup.name,
@@ -185,7 +185,7 @@ def query_positive(campaign_id, adgroup_id, hotel_id, district_id, province_id):
             Keyword.id,
             SearchKeyword.id,
             Keyword.word,
-            text(Keyword.type.name),
+            Keyword.type,
             literal('ad_group', type_=Unicode).label('filter_by'),
             literal('positive', type_=Unicode).label('keyword_type'),
             AdGroup.name,
@@ -205,7 +205,7 @@ def query_positive(campaign_id, adgroup_id, hotel_id, district_id, province_id):
             Keyword.id,
             SearchKeyword.id,
             Keyword.word,
-            text(Keyword.type.name),
+            Keyword.type,
             literal('ad_group', type_=Unicode).label('filter_by'),
             literal('positive', type_=Unicode).label('keyword_type'),
             AdGroup.name,
@@ -232,11 +232,11 @@ def query_positive(campaign_id, adgroup_id, hotel_id, district_id, province_id):
             Keyword.id,
             SearchKeyword.id,
             Keyword.word,
-            text(Keyword.type.name),
+            Keyword.type,
             literal('ad_group', type_=Unicode).label('filter_by'),
             literal('positive', type_=Unicode).label('keyword_type'),
             AdGroup.name,
-            text(SearchKeyword.target_type.name),
+            SearchKeyword.target_type,
             target_name
         ).select_from(SearchKeyword) \
             .join(Keyword, Keyword.id == SearchKeyword.keyword_id) \
@@ -258,11 +258,11 @@ def query_positive(campaign_id, adgroup_id, hotel_id, district_id, province_id):
             Keyword.id,
             SearchKeyword.id,
             Keyword.word,
-            text(Keyword.type.name),
+            Keyword.type,
             literal('ad_group', type_=Unicode).label('filter_by'),
             literal('positive', type_=Unicode).label('keyword_type'),
             AdGroup.name,
-            text(SearchKeyword.target_type.name),
+            SearchKeyword.target_type,
             target_name
         ).select_from(SearchKeyword) \
             .join(Keyword, Keyword.id == SearchKeyword.keyword_id) \
@@ -283,11 +283,11 @@ def query_positive(campaign_id, adgroup_id, hotel_id, district_id, province_id):
         Keyword.id,
         SearchKeyword.id,
         Keyword.word,
-        text(Keyword.type.name),
+        Keyword.type,
         literal('ad_group', type_=Unicode).label('filter_by'),
         literal('positive', type_=Unicode).label('keyword_type'),
         AdGroup.name,
-        text(SearchKeyword.target_type.name),
+        SearchKeyword.target_type,
         target_name
     ).select_from(SearchKeyword) \
         .join(Keyword, Keyword.id == SearchKeyword.keyword_id) \

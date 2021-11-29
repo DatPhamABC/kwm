@@ -3,8 +3,8 @@ from flask_wtf import FlaskForm
 from wtforms import TextField, PasswordField, SubmitField
 from wtforms.validators import Required, Email
 
-from app.models.login.user import User
-from app.utils.db_insert import conn
+from keywordmanager.models.login.user import User
+from keywordmanager.utils.insert import conn
 
 
 class SignupForm(FlaskForm):
