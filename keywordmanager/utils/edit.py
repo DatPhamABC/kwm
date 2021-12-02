@@ -1,4 +1,4 @@
-from sqlalchemy import text, literal, Unicode, case
+from sqlalchemy import text, literal, Unicode, case, and_
 
 from keywordmanager.db.session import conn
 from keywordmanager.models.ads.ad_groups import AdGroup
@@ -11,32 +11,33 @@ from keywordmanager.models.hotels.province import Province
 from keywordmanager.models.keywords.search import SearchKeyword
 
 
-def get_keyword_info(id):
-    positive_id = conn('default').query(SearchKeyword.id).filter(SearchKeyword.keyword_id == id).first()
-    if positive_id is not None:
-        target_name = case([(SearchKeyword.target_type == 'hotels',
-                             conn('hotels').query(Hotel.hotel_name).filter(Hotel.id == SearchKeyword.target_id)),
-                            (SearchKeyword.target_type == 'province',
-                             conn('hotels').query(Province.name).filter(Province.id == SearchKeyword.target_id)),
-                            (SearchKeyword.target_type == 'district',
-                             conn('hotels').query(District.name).filter(District.id == SearchKeyword.target_id))],
-                           else_=None)
+def get_keyword_info(id, keyword_type, type_id):
+    # type_id is the id of keyword in it respective table (search or negative)
+    keyword_info = []
+    if keyword_type == 'positive' is not None:
         keyword_info = conn('default').query(
             Keyword.id,
             Keyword.word,
             literal('positive', type_=Unicode).label('form_type'),
             Keyword.type,
             literal('ad_group', type_=Unicode).label('filter_by'),
+            AdGroup.campaignname,
             AdGroup.name,
             SearchKeyword.target_type,
-            target_name,
+            Hotel.hotel_name,
+            District.name,
+            Province.name,
             SearchKeyword.id
         ).select_from(SearchKeyword) \
-            .join(Keyword, Keyword.id == SearchKeyword.keyword_id) \
-            .join(AdGroup, AdGroup.id == SearchKeyword.ad_group_id) \
-            .filter(SearchKeyword.keyword_id == id)\
+            .join(Keyword, Keyword.id == SearchKeyword.keyword_id, isouter=True) \
+            .join(AdGroup, AdGroup.id == SearchKeyword.ad_group_id, isouter=True)\
+            .join(Hotel, and_(Hotel.id == SearchKeyword.target_id, SearchKeyword.target_type == 'hotels'), isouter=True)\
+            .join(Province, and_(Province.id == SearchKeyword.target_id, SearchKeyword.target_type == 'province'), isouter=True)\
+            .join(District, and_(District.id == SearchKeyword.target_id, SearchKeyword.target_type == 'district'), isouter=True) \
+            .filter(SearchKeyword.keyword_id == id, SearchKeyword.id == type_id)\
             .first()
-    else:
+
+    if keyword_type == 'negative':
         level = case([(NegativeKeyword.ad_group_id != None, literal("adgroup", type_=Unicode)),
                       (NegativeKeyword.campaign_id != None, literal("campaign", type_=Unicode))],
                      else_=None)
@@ -53,7 +54,7 @@ def get_keyword_info(id):
             .join(Keyword, Keyword.id == NegativeKeyword.keyword_id) \
             .join(Campaign, Campaign.id == NegativeKeyword.campaign_id, isouter=True)\
             .join(AdGroup, AdGroup.id == NegativeKeyword.ad_group_id, isouter=True) \
-            .filter(Keyword.id == id) \
+            .filter(Keyword.id == id, NegativeKeyword.id == type_id) \
             .first()
     return keyword_info
 

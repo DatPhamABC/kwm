@@ -6,6 +6,7 @@ from flask_login import LoginManager
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.secret_key = '511312c97a7bfbdaaee96cde'
+app.config["SQLALCHEMY_ECHO"] = True
 
 # Flask-login init
 login_manager = LoginManager()

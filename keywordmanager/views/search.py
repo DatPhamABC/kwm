@@ -1,5 +1,7 @@
+import json
 import os
 import traceback
+from collections import defaultdict
 
 import pandas
 from flask import request, render_template, flash, send_file
@@ -7,7 +9,7 @@ from werkzeug.utils import redirect
 
 from keywordmanager import app
 from keywordmanager.utils.search import Filter, get_campaign_list, get_adgroup_list, get_province_list, \
-    get_district_list, get_hotel_list, delete_multiple
+    get_district_list, get_hotel_list, delete_multiple, get_adgroup_list2
 from keywordmanager.views.decorator import login_required
 
 
@@ -30,10 +32,15 @@ def search_home():
                     request.args.get('hotel-filter'),
                     request.args.get('kwtype-filter'))
     keyword_list = filter.get_keyword_list()
+    adgroup_dict = defaultdict(list)
+    for item in get_adgroup_list2():
+        adgroup_dict[item[0]].append(item[1])
+    adgroup_dict = json.loads(json.dumps(adgroup_dict))
     search_url = request.url
     return render_template('/search/search.html',
                            campaign_list=get_campaign_list(),
                            adgroup_list=get_adgroup_list(),
+                           adgroup_list_2=adgroup_dict,
                            province_list=get_province_list(),
                            district_list=get_district_list(),
                            hotel_list=get_hotel_list(),

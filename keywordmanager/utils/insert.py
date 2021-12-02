@@ -12,8 +12,7 @@ def insert_keyword(model, insert_dict):
 
 def update_on_dupkey(model, insert_dict):
     insert_db = insert(model).values(insert_dict)
-    update_on_duplicate_key = insert_db.on_duplicate_key_update(id=insert_db.inserted.id,
-                                                                type=insert_db.inserted.type,
+    update_on_duplicate_key = insert_db.on_duplicate_key_update(type=insert_db.inserted.type,
                                                                 is_active=insert_db.inserted.is_active)
     conn('default').execute(update_on_duplicate_key)
 

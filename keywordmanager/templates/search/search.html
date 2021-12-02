@@ -50,8 +50,13 @@
                                         <optgroup>
                                             <option value="Tất cả">Tất cả</option>
                                             <option disabled>________</option>
+                                            {% for item in adgroup_list_2 %}
+                                                {% for i in adgroup_list_2[item] %}
+                                                    <option data-campaign="{{item}}" value="{{i}}" style="display: none">{{i}}</option>
+                                                {% endfor %}
+                                            {%endfor%}
                                             {% for item in adgroup_list %}
-                                                <option value="{{item[0]}}">{{item[0]}}</option>
+                                                <option data-campaign="Tất cả" value="{{item[0]}}">{{item[0]}}</option>
                                             {%endfor%}
                                         </optgroup>
                                     </select>
@@ -125,7 +130,8 @@
                         <th style="display:none;"></th>
                         <th>Level</th>
                         <th>Positive/Negative</th>
-                        <th>Level name</th>
+                        <th>Campaign name</th>
+                        <th>Adgroup name</th>
                         <th>Target name</th>
                         <th>Target type</th>
                         <th></th>
@@ -143,8 +149,9 @@
                             <td>{{ item[6] }}</td>
                             <td>{{ item[7] }}</td>
                             <td>{{ item[8] }}</td>
+                            <td>{{ item[9] }}</td>
                             <td>
-                                <a href="{{ url_for('.keyword_edit', id=item[0])|urlencode }}">Sửa</a>
+                                <a href="{{ url_for('.keyword_edit', id=item[0], type=item[5], tid=item[1])|urlencode }}">Sửa</a>
                             </td>
                         </tr>
                     {% endfor %}

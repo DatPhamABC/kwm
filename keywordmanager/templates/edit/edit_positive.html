@@ -47,6 +47,12 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="col-lg-3">Campaign:</label>
+                    <div class="col-lg-8">
+                        <input id="campaign" class="form-control" type="text" value="{{campaign_name}}" readonly="readonly">
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="col-lg-3">Ad group:</label>
                     <div class="col-lg-8">
                         <input id="adgroup" class="form-control" type="text" value="{{ad_group_name}}" readonly="readonly">
@@ -81,6 +87,8 @@
 
         <div class="col change-info">
             <form id="keyword-update-form" class="form-horizontal" role="form" method="POST" action="/edit/update/positive">
+                <input type="hidden" name="id" value="{{id}}">
+                <input type="hidden" name="positive_id" value="{{positive_id}}">
                 <input type="hidden" name="keyword" value="{{keyword}}">
                 <div class="form-group">
                     <label class="col-lg-3 control-label">Form type:</label>
@@ -91,7 +99,7 @@
                 <div class="form-group">
                     <label class="col-lg-3 control-label">Match type:</label>
                     <div class="col-lg-8">
-                        <select id="match-type-select" name="match_type" class="form-select">
+                        <select id="match-type-select" name="match_type" class="form-select" disabled>
                             <option hidden disabled selected value> -- select an option -- </option>
                             <option value="broad">broad</option>
                             <option value="exact">exact</option>
@@ -108,14 +116,30 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="col-lg-3 control-label">Campaign:</label>
+                    <div class="col-lg-8">
+                        <div class="ui-select">
+                            <select id="campaign-select" name="campaign" class="form-select">
+                                <option hidden disabled selected value> -- select an option -- </option>
+                                <option value="None">None</option>
+                                {% for item in campaign_list %}
+                                    <option value="{{item[0]}}">{{item[0]}}</option>
+                                {%endfor%}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="col-lg-3 control-label">Adgroup:</label>
                     <div class="col-lg-8">
                         <div class="ui-select">
-                            <select id="adgroup-select" name="adgroup" class="form-select">
+                            <select id="adgroup-select" name="adgroup" class="form-select" disabled>
                                 <option hidden disabled selected value> -- select an option -- </option>
                                 <option value="None">None</option>
                                 {% for item in adgroup_list %}
-                                    <option value="{{item[0]}}">{{item[0]}}</option>
+                                    {% for i in adgroup_list[item] %}
+                                        <option data-campaign="{{item}}" value="{{i}}">{{i}}</option>
+                                    {%endfor%}
                                 {%endfor%}
                             </select>
                         </div>
@@ -128,7 +152,7 @@
                             <select id="target-select" name="target_type" class="form-select">
                                 <option hidden disabled selected value> -- select an option -- </option>
                                 <option value="None">None</option>
-                                <option value="hotel">Hotel</option>
+                                <option value="hotels">Hotel</option>
                                 <option value="district">District</option>
                                 <option value="province">Province</option>
                             </select>

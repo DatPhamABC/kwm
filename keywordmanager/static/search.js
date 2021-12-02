@@ -1,6 +1,7 @@
 $(document).ready(function () {
     table = $('#table-detail').DataTable({
         dom: 'lfrtip',
+        'paging': true,
         'columnDefs': [
          {
             orderable: false,
@@ -13,17 +14,17 @@ $(document).ready(function () {
         'order': [[1, 'asc']]
     });
 
-    $('#campaign-input').on("change", function(){
-        var campaign_name = $(this).find(":selected").text();
-        if (campaign_name == "None"){
-            $('#campaign-select').attr("disabled", false);
-            $('#adgroup-select').attr("disabled", true);
-            $('#adgroup-select option[value="None"]').prop('selected', true).change();
-        }
-    });
-
     $('#campaign_input').on("change", function(){
         localStorage.setItem('campaign', this.value);
+
+        $('#adgroup_input').find('option').hide();
+        $('#adgroup_input option[value="Tất cả"]').show();
+        //add disabled for the other selects option for the new value
+        if (this.value) {
+            console.log(this.value);
+            $('#adgroup_input').find("option[data-campaign='"+this.value+"']").show();
+            $('#adgroup_input').val("Tất cả").trigger("change");
+        }
     });
     if(localStorage.getItem('campaign')){
         $('#campaign_input').val(localStorage.getItem('campaign'));

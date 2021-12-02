@@ -1,4 +1,4 @@
-from sqlalchemy import text, literal, Unicode, case, asc, delete
+from sqlalchemy import literal, Unicode, case, asc, delete, and_, or_
 
 from keywordmanager.db.session import conn
 from keywordmanager.models.ads.ad_groups import AdGroup
@@ -21,34 +21,32 @@ class Filter:
         self.keyword_type = keyword_type
 
         if self.campaign == 'Tất cả':
-            self.campaign = ''
+            self.campaign = None
         if self.adgroup == 'Tất cả':
-            self.adgroup = ''
+            self.adgroup = None
         if self.province == 'Tất cả':
-            self.province = ''
+            self.province = None
         if self.district == 'Tất cả':
-            self.district = ''
+            self.district = None
         if self.hotel == 'Tất cả':
-            self.hotel = ''
+            self.hotel = None
         if self.keyword_type == 'Tất cả':
-            self.keyword_type = ''
+            self.keyword_type = None
 
     def get_keyword_list(self):
-        campaign_id = get_campaign_id(self.campaign)
-        adgroup_id = get_adgroup_id(self.adgroup)
         province_id = get_province_id(self.province)
         district_id = get_district_id(self.district)
         hotel_id = get_hotel_id(self.hotel)
         keyword_list = []
         if self.keyword_type == 'negative':
-            keyword_list.extend(query_negative(campaign_id, adgroup_id, hotel_id, district_id, province_id))
+            keyword_list.extend(query_negative(self.campaign, self.adgroup, hotel_id, district_id, province_id))
 
         if self.keyword_type == 'positive':
-            keyword_list.extend(query_positive(campaign_id, adgroup_id, hotel_id, district_id, province_id))
+            keyword_list.extend(query_positive(self.campaign, self.adgroup, hotel_id, district_id, province_id))
 
-        if self.keyword_type == '':
-            keyword_list.extend(query_negative(campaign_id, adgroup_id, hotel_id, district_id, province_id))
-            keyword_list.extend(query_positive(campaign_id, adgroup_id, hotel_id, district_id, province_id))
+        if self.keyword_type is None:
+            keyword_list.extend(query_negative(self.campaign, self.adgroup, hotel_id, district_id, province_id))
+            keyword_list.extend(query_positive(self.campaign, self.adgroup, hotel_id, district_id, province_id))
 
         return keyword_list
 
@@ -58,7 +56,12 @@ def get_campaign_list():
 
 
 def get_adgroup_list():
-    return conn('ads').query(AdGroup.name).order_by(asc(AdGroup.name)).all()
+    return conn('ads').query(AdGroup.name).group_by(AdGroup.name).order_by(asc(AdGroup.name)).all()
+
+
+def get_adgroup_list2():
+    return conn('default').query(AdGroup.campaignname, AdGroup.name)\
+        .order_by(asc(AdGroup.campaignname), asc(AdGroup.name)).all()
 
 
 def get_province_list():
@@ -93,72 +96,49 @@ def get_hotel_id(hotel_name):
     return conn('hotels').query(Hotel.id).filter(Hotel.hotel_name == hotel_name).first()
 
 
-def query_negative(campaign_id, adgroup_id, hotel_id, district_id, province_id):
-    if campaign_id is not None:
-        campaign_id = campaign_id[0]
+def query_negative(campaign, adgroup, hotel_id, district_id, province_id):
+    if hotel_id is None and district_id is None and province_id is None and campaign is None and adgroup is None:
+        filter_by = case([(AdGroup.name == None, literal('campaign', type_=Unicode).label('filter_by')),
+                          (AdGroup.name != None, literal('ad_group', type_=Unicode).label('filter_by'))],
+                         else_=None)
         query = conn('default').query(
             Keyword.id,
             NegativeKeyword.id,
-            Keyword.word, Keyword.type,
-            literal("campaign", type_=Unicode).label('filter_by'),
-            literal("negative", type_=Unicode).label('keyword_type'), Campaign.name
-        ).select_from(NegativeKeyword) \
-            .join(Keyword, Keyword.id == NegativeKeyword.keyword_id) \
-            .join(Campaign, Campaign.id == NegativeKeyword.campaign_id) \
-            .filter(NegativeKeyword.campaign_id == campaign_id) \
-            .all()
-
-        return query
-
-    if adgroup_id is not None:
-        adgroup_id = adgroup_id[0]
-        query = conn('default').query(
-            Keyword.id,
-            NegativeKeyword.id,
-            Keyword.word, Keyword.type,
-            literal('ad_group', type_=Unicode).label('filter_by'),
+            Keyword.word,
+            Keyword.type,
+            filter_by,
             literal('negative', type_=Unicode).label('keyword_type'),
+            Campaign.name,
             AdGroup.name
         ).select_from(NegativeKeyword) \
-            .join(Keyword, Keyword.id == NegativeKeyword.keyword_id) \
-            .join(AdGroup, AdGroup.id == NegativeKeyword.ad_group_id) \
-            .filter(NegativeKeyword.ad_group_id == adgroup_id) \
+            .join(Keyword, Keyword.id == NegativeKeyword.keyword_id, isouter=True)\
+            .join(Campaign, Campaign.id == NegativeKeyword.campaign_id, isouter=True) \
+            .join(AdGroup, AdGroup.id == NegativeKeyword.ad_group_id, isouter=True) \
             .all()
         return query
 
-    if hotel_id is None and district_id is None and province_id is None:
-        query_list = []
-        query = conn('default').query(
-            Keyword.id,
-            NegativeKeyword.id,
-            Keyword.word, Keyword.type,
-            literal('ad_group', type_=Unicode).label('filter_by'),
-            literal('negative', type_=Unicode).label('keyword_type'),
-            AdGroup.name
-        ).select_from(NegativeKeyword) \
-            .join(Keyword, Keyword.id == NegativeKeyword.keyword_id) \
-            .join(AdGroup, AdGroup.id == NegativeKeyword.ad_group_id) \
-            .all()
-        query_list.extend(query)
-
-        query = conn('default').query(
-            Keyword.id,
-            NegativeKeyword.id,
-            Keyword.word, Keyword.type,
-            literal('campaign', type_=Unicode).label('filter_by'),
-            literal('negative', type_=Unicode).label('keyword_type'),
-            Campaign.name
-        ).select_from(NegativeKeyword) \
-            .join(Keyword, Keyword.id == NegativeKeyword.keyword_id) \
-            .join(Campaign, Campaign.id == NegativeKeyword.campaign_id) \
-            .all()
-        query_list.extend(query)
-        return query_list
-
-    return []
+    filter_by = case([(AdGroup.name == None, literal('campaign', type_=Unicode).label('filter_by')),
+                      (AdGroup.name != None, literal('ad_group', type_=Unicode).label('filter_by'))],
+                     else_=None)
+    query = conn('default').query(
+        Keyword.id,
+        NegativeKeyword.id,
+        Keyword.word,
+        Keyword.type,
+        filter_by,
+        literal('negative', type_=Unicode).label('keyword_type'),
+        Campaign.name,
+        AdGroup.name
+    ).select_from(NegativeKeyword) \
+        .join(Keyword, Keyword.id == NegativeKeyword.keyword_id, isouter=True) \
+        .join(Campaign, and_(Campaign.id == NegativeKeyword.campaign_id, adgroup != None), isouter=True) \
+        .join(AdGroup, and_(AdGroup.id == NegativeKeyword.ad_group_id, adgroup != None), isouter=True)\
+        .filter(or_(and_(adgroup != None, AdGroup.name == adgroup), and_(campaign != None, Campaign.name == campaign))) \
+        .all()
+    return query
 
 
-def query_positive(campaign_id, adgroup_id, hotel_id, district_id, province_id):
+def query_positive(campaign, adgroup, hotel_id, district_id, province_id):
     if hotel_id is not None:
         hotel_id = hotel_id[0]
         query = conn('default').query(
@@ -168,13 +148,14 @@ def query_positive(campaign_id, adgroup_id, hotel_id, district_id, province_id):
             Keyword.type,
             literal('ad_group', type_=Unicode).label('filter_by'),
             literal('positive', type_=Unicode).label('keyword_type'),
+            AdGroup.campaignname,
             AdGroup.name,
             literal('hotel', type_=Unicode).label('target_type'),
             Hotel.hotel_name
         ).select_from(SearchKeyword) \
-            .join(Keyword, Keyword.id == SearchKeyword.keyword_id) \
-            .join(AdGroup, AdGroup.id == SearchKeyword.ad_group_id) \
-            .join(Hotel, Hotel.id == SearchKeyword.target_id) \
+            .join(Keyword, Keyword.id == SearchKeyword.keyword_id, isouter=True) \
+            .join(AdGroup, AdGroup.id == SearchKeyword.ad_group_id, isouter=True) \
+            .join(Hotel, Hotel.id == SearchKeyword.target_id, isouter=True) \
             .filter(Hotel.id == hotel_id) \
             .all()
         return query
@@ -188,13 +169,14 @@ def query_positive(campaign_id, adgroup_id, hotel_id, district_id, province_id):
             Keyword.type,
             literal('ad_group', type_=Unicode).label('filter_by'),
             literal('positive', type_=Unicode).label('keyword_type'),
+            AdGroup.campaignname,
             AdGroup.name,
             literal('district', type_=Unicode).label('target_type'),
             District.name
         ).select_from(SearchKeyword) \
-            .join(Keyword, Keyword.id == SearchKeyword.keyword_id) \
-            .join(AdGroup, AdGroup.id == SearchKeyword.ad_group_id) \
-            .join(District, District.id == SearchKeyword.target_id) \
+            .join(Keyword, Keyword.id == SearchKeyword.keyword_id, isouter=True) \
+            .join(AdGroup, AdGroup.id == SearchKeyword.ad_group_id, isouter=True) \
+            .join(District, District.id == SearchKeyword.target_id, isouter=True) \
             .filter(District.id == district_id) \
             .all()
         return query
@@ -208,25 +190,22 @@ def query_positive(campaign_id, adgroup_id, hotel_id, district_id, province_id):
             Keyword.type,
             literal('ad_group', type_=Unicode).label('filter_by'),
             literal('positive', type_=Unicode).label('keyword_type'),
+            AdGroup.campaignname,
             AdGroup.name,
             literal('province', type_=Unicode).label('target_type'),
             Province.name
         ).select_from(SearchKeyword) \
-            .join(Keyword, Keyword.id == SearchKeyword.keyword_id) \
-            .join(AdGroup, AdGroup.id == SearchKeyword.ad_group_id) \
-            .join(Province, Province.id == SearchKeyword.target_id) \
+            .join(Keyword, Keyword.id == SearchKeyword.keyword_id, isouter=True) \
+            .join(AdGroup, AdGroup.id == SearchKeyword.ad_group_id, isouter=True) \
+            .join(Province, Province.id == SearchKeyword.target_id, isouter=True) \
             .filter(Province.id == province_id) \
             .all()
         return query
 
-    if adgroup_id is not None:
-        adgroup_id = adgroup_id[0]
-        target_name = case([(SearchKeyword.target_type == 'hotels',
-                             conn('hotels').query(Hotel.hotel_name).filter(Hotel.id == SearchKeyword.target_id)),
-                            (SearchKeyword.target_type == 'province',
-                             conn('hotels').query(Province.name).filter(Province.id == SearchKeyword.target_id)),
-                            (SearchKeyword.target_type == 'district',
-                             conn('hotels').query(District.name).filter(District.id == SearchKeyword.target_id))],
+    if adgroup is not None:
+        target_name = case([(SearchKeyword.target_type == 'hotels', Hotel.hotel_name),
+                            (SearchKeyword.target_type == 'province', Province.name),
+                            (SearchKeyword.target_type == 'district', District.name)],
                            else_=None)
         query = conn('default').query(
             Keyword.id,
@@ -235,24 +214,24 @@ def query_positive(campaign_id, adgroup_id, hotel_id, district_id, province_id):
             Keyword.type,
             literal('ad_group', type_=Unicode).label('filter_by'),
             literal('positive', type_=Unicode).label('keyword_type'),
+            AdGroup.campaignname,
             AdGroup.name,
             SearchKeyword.target_type,
             target_name
         ).select_from(SearchKeyword) \
             .join(Keyword, Keyword.id == SearchKeyword.keyword_id) \
-            .join(AdGroup, AdGroup.id == SearchKeyword.ad_group_id) \
-            .filter(AdGroup.id == adgroup_id) \
+            .join(AdGroup, AdGroup.id == SearchKeyword.ad_group_id)\
+            .join(Hotel, and_(Hotel.id == SearchKeyword.target_id, SearchKeyword.target_type == 'hotels'), isouter=True)\
+            .join(District, and_(District.id == SearchKeyword.target_id, SearchKeyword.target_type == 'district'), isouter=True)\
+            .join(Province, and_(Province.id == SearchKeyword.target_id, SearchKeyword.target_type == 'province'), isouter=True)\
+            .filter(AdGroup.name == adgroup) \
             .all()
         return query
 
-    if campaign_id is not None:
-        campaign_id = campaign_id[0]
-        target_name = case([(SearchKeyword.target_type == 'hotels',
-                             conn('hotels').query(Hotel.hotel_name).filter(Hotel.id == SearchKeyword.target_id)),
-                            (SearchKeyword.target_type == 'province',
-                             conn('hotels').query(Province.name).filter(Province.id == SearchKeyword.target_id)),
-                            (SearchKeyword.target_type == 'district',
-                             conn('hotels').query(District.name).filter(District.id == SearchKeyword.target_id))],
+    if campaign is not None:
+        target_name = case([(SearchKeyword.target_type == 'hotels', Hotel.hotel_name),
+                            (SearchKeyword.target_type == 'province', Province.name),
+                            (SearchKeyword.target_type == 'district', District.name)],
                            else_=None)
         query = conn('default').query(
             Keyword.id,
@@ -261,23 +240,25 @@ def query_positive(campaign_id, adgroup_id, hotel_id, district_id, province_id):
             Keyword.type,
             literal('ad_group', type_=Unicode).label('filter_by'),
             literal('positive', type_=Unicode).label('keyword_type'),
+            AdGroup.campaignname,
             AdGroup.name,
             SearchKeyword.target_type,
             target_name
         ).select_from(SearchKeyword) \
             .join(Keyword, Keyword.id == SearchKeyword.keyword_id) \
             .join(AdGroup, AdGroup.id == SearchKeyword.ad_group_id) \
-            .join(Campaign, Campaign.id == AdGroup.campaignid) \
-            .filter(Campaign.id == campaign_id) \
+            .join(Hotel, and_(Hotel.id == SearchKeyword.target_id, SearchKeyword.target_type == 'hotels'), isouter=True) \
+            .join(District, and_(District.id == SearchKeyword.target_id, SearchKeyword.target_type == 'district'),
+                  isouter=True) \
+            .join(Province, and_(Province.id == SearchKeyword.target_id, SearchKeyword.target_type == 'province'),
+                  isouter=True) \
+            .filter(Campaign.name == campaign) \
             .all()
         return query
 
-    target_name = case([(SearchKeyword.target_type == 'hotels',
-                         conn('hotels').query(Hotel.hotel_name).filter(Hotel.id == SearchKeyword.target_id)),
-                        (SearchKeyword.target_type == 'province',
-                         conn('hotels').query(Province.name).filter(Province.id == SearchKeyword.target_id)),
-                        (SearchKeyword.target_type == 'district',
-                         conn('hotels').query(District.name).filter(District.id == SearchKeyword.target_id))],
+    target_name = case([(SearchKeyword.target_type == 'hotels', Hotel.hotel_name),
+                        (SearchKeyword.target_type == 'province', Province.name),
+                        (SearchKeyword.target_type == 'district', District.name)],
                        else_=None)
     query = conn('default').query(
         Keyword.id,
@@ -286,12 +267,18 @@ def query_positive(campaign_id, adgroup_id, hotel_id, district_id, province_id):
         Keyword.type,
         literal('ad_group', type_=Unicode).label('filter_by'),
         literal('positive', type_=Unicode).label('keyword_type'),
+        AdGroup.campaignname,
         AdGroup.name,
         SearchKeyword.target_type,
         target_name
     ).select_from(SearchKeyword) \
         .join(Keyword, Keyword.id == SearchKeyword.keyword_id) \
         .join(AdGroup, AdGroup.id == SearchKeyword.ad_group_id) \
+        .join(Hotel, and_(Hotel.id == SearchKeyword.target_id, SearchKeyword.target_type == 'hotels'), isouter=True) \
+        .join(District, and_(District.id == SearchKeyword.target_id, SearchKeyword.target_type == 'district'),
+              isouter=True) \
+        .join(Province, and_(Province.id == SearchKeyword.target_id, SearchKeyword.target_type == 'province'),
+              isouter=True) \
         .all()
     return query
 

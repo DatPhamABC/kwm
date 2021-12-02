@@ -63,7 +63,9 @@
 
         <div class="col change-info">
             <form id="keyword-update-form" class="form-horizontal" role="form" method="POST" action="/edit/update/negative">
-                <input class="form-control" name="keyword" type="hidden" value="{{keyword}}">
+                <input name="id" type="hidden" value="{{id}}">
+                <input name="negative_id" type="hidden" value="{{negative_id}}">
+                <input name="keyword" type="hidden" value="{{keyword}}">
                 <div class="form-group">
                     <label class="col-lg-3 control-label">Form type:</label>
                         <div class="col-lg-8">
@@ -97,7 +99,6 @@
                     <label class="col-lg-3 control-label">Campaign:</label>
                     <div class="col-lg-8">
                         <div class="ui-select">
-                            <input type="hidden" name="old_campaign" value="{{campaign_name}}">
                             <select id="campaign-select" name="campaign" class="form-select" disabled="disabled">
                                 <option hidden disabled selected value> -- select an option -- </option>
                                 <option value="None">None</option>
@@ -112,12 +113,13 @@
                     <label class="col-lg-3 control-label">Adgroup:</label>
                     <div class="col-lg-8">
                         <div class="ui-select">
-                            <input type="hidden" name="old_adgroup" value="{{ad_group_name}}">
                             <select id="adgroup-select" name="adgroup" class="form-select" disabled="disabled">
                                 <option hidden disabled selected value> -- select an option -- </option>
                                 <option value="None">None</option>
                                 {% for item in adgroup_list %}
-                                    <option value="{{item[0]}}">{{item[0]}}</option>
+                                    {% for i in adgroup_list[item] %}
+                                        <option data-campaign="{{item}}" value="{{i}}">{{i}}</option>
+                                    {% endfor %}
                                 {%endfor%}
                             </select>
                         </div>

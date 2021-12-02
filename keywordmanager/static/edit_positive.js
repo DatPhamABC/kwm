@@ -1,12 +1,22 @@
 $(document).ready(function () {
-
     $('#pass-button').on("click", function(){
         $('#match-type-select').val($('#match-type').val()).trigger("change");
+        $('#campaign-select').val($('#campaign').val()).trigger("change");
         $('#adgroup-select').val($('#adgroup').val()).trigger("change");
         $('#target-select').val($('#target-type').val()).trigger("change");
         $('#hotel-select').val($('#hotel').val()).trigger("change");
         $('#district-select').val($('#district').val()).trigger("change");
         $('#province-select').val($('#province').val()).trigger("change");
+    })
+
+    $('#campaign-select').on("change", function(){
+        $('#adgroup-select').attr("disabled", false);
+        $('#adgroup-select').find('option').hide();
+        //add disabled for the other selects option for the new value
+        if (this.value) {
+            console.log(this.value);
+            $('#adgroup-select').find("option[data-campaign='"+this.value+"']").show();
+        }
     })
 
     $('#target-select').on("change", function(){
